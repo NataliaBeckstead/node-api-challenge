@@ -63,16 +63,18 @@ router.post("/:id/actions/", (req, res) => {
     if (!req.body.notes || !req.body.description || !req.body.project_id) {
         res.status(400).json({ errorMessage: "Please provide notes, project_id and description for the post." });
     } else {
-        Actions.insert(req.body)
-        .then(() => {
-          res.status(201).json(req.body);
-        })
-        .catch((err) => {
-          console.log(err);
-          res.status(500).json({
-            error: "There was an error while saving the project to the database",
-          });
-        })
+        if (req.body.description.length >= 128 ) {
+            res.status(400).json({ errorMessage: "Description too long" });
+        } else {
+            Actions.insert(req.body)
+            .then(() => {
+                res.status(201).json(req.body);
+            })
+            .catch((err) => {
+                console.log(err);
+                res.status(500).json({ error: "There was an error while saving the project to the database" });
+            })
+        }
     }
 });
 
